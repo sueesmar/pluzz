@@ -31,6 +31,9 @@ package main
 // //
 // //====================================================================
 
+// // Payload is a custom Payload byte slice for fuzzing it explicitly with a custom function
+// type Payload []byte
+
 // // SFLAG is a custom SFLAG field for fuzzing it explicitly with a custom function
 // type SFLAG bool
 
