@@ -552,4 +552,4 @@ func boolToInt(b bool) uint32 {
 
 // fuzzFuncs defines slice for fuzzing functions and add them to slice, which is used from the fuzzer.
 // You have to add your custom fuzzing functions here manually to fuzzFuncs.
-var fuzzFuncs = []interface{}{FuzzPCFLenValid, FuzzPCFIntegrityValidRandom, FuzzPSNValidUpcounting, FuzzPSEValidUpcounting}
+var fuzzFuncs = []interface{}{FuzzPCFLenValid, FuzzPCFIntegrityValidRandom, FuzzPSNInvalidZero, FuzzPSEValidUpcounting}

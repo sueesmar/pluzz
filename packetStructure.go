@@ -122,7 +122,7 @@ func InitShimLayer() {
 	shimLayer.SFlag.FuzzIt = true
 	shimLayer.XFlag.MinLen = 1
 	shimLayer.XFlag.MaxLen = 1
-	shimLayer.XFlag.FuzzIt = false
+	shimLayer.XFlag.FuzzIt = true
 	shimLayer.PSE.MinLen = 1
 	shimLayer.PSE.MaxLen = 1
 	shimLayer.PSE.FuzzIt = true
