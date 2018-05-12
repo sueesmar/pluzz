@@ -30,6 +30,8 @@ var (
 	device = flag.String("dev", "", "Network interface, for sending and receiving packets.")
 	// targetIP sets the destination of the fuzzed packets.
 	destIP = flag.String("target-ip", "", "IP address of the target of the fuzzing process.")
+	// srcIP sets the source IP from the sending endpoint. It is used to poison the ARP cache for man-in-the-middle mode.
+	srcIP = flag.String("source-ip", "", "IP address of the original source of the fuzzing process to poison its ARP table. Activates man-in-the-middle mode.")
 	// fuzzerSeed sets the seed for deterministic fuzzing.
 	fuzzerSeed = flag.Int64("fuzzer-seed", 0, "Seed for random generator of fuzzer. Used by gofuzz to make fuzzing deterministic.")
 	// localPort sets the local source port of the packets.
@@ -160,8 +162,14 @@ func main() {
 		Error.Fatal("Value for -max-storage-capacity invalid. Please provide a value bigger or equal to 0. 0 means unlimited and is default.")
 	}
 
-	if checkIP := net.ParseIP(*destIP); checkIP == nil {
-		Error.Fatal("Invalid IP address provided. Please provide a valid IP address with the option -target-ip.")
+	if checkDestIP := net.ParseIP(*destIP); checkDestIP == nil {
+		Error.Fatal("Invalid destination IP address provided. Please provide a valid IP address with the option -target-ip.")
+	}
+
+	if *srcIP != "" {
+		if checkSrcIP := net.ParseIP(*srcIP); checkSrcIP == nil {
+			Error.Fatal("Invalid sender IP address provided. Please provide a valid IP address to ARP poison with the option -source-ip.")
+		}
 	}
 
 	// Listen for ctrl+c to write entry to log file.
@@ -180,7 +188,7 @@ func main() {
 
 	// Execute the code for fuzzing new packets or replay a given pcap file.
 	switch {
-	case *pcapPathReplay == "" && *pcapPathFuzz == "":
+	case *pcapPathReplay == "" && *pcapPathFuzz == "" && *srcIP == "":
 		// Replay path not set, so start new packet fuzzing
 		go SendPackets(fuzzingRoundDone)
 	case *pcapPathReplay != "":
@@ -189,6 +197,10 @@ func main() {
 	case *pcapPathFuzz != "":
 		// Path to pcap for fuzzing set, so replay AND fuzz it.
 		go FuzzCapturedPackets(fuzzingRoundDone)
+	case *srcIP != "":
+		// srcIP set, this is the mode for man-in-the-middle fuzzing
+		go ARPPoison()
+		go FuzzMITM(fuzzingRoundDone)
 	}
 	<-fuzzingRoundDone
 }

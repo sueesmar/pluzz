@@ -507,6 +507,39 @@ func WriteFuzzReplayLogHeader() {
 	Log.Println("---------------------------------------------------------------------------------------------------------------------------------------")
 }
 
+// WriteFuzzMITMLogHeader writes log header for man-in-the-middle fuzzing.
+func WriteFuzzMITMLogHeader() {
+
+	// Get the name of the executable
+	executable, err := os.Executable()
+	if err != nil {
+		Error.Fatal("Can't get the name of the executable.")
+	}
+
+	Log.Println("---------------------------------------------------------------------------------------------------------------------------------------")
+	Log.Println("Start of fuzzing with a man-in-the-middle attack:", time.Now())
+	Log.Println("Operating system:", runtime.GOOS, "/", runtime.GOARCH)
+	Log.Println("Interface:", *device)
+	Log.Println("Fuzzing target IP:", *destIP)
+	Log.Println("Fuzzing target port:", *targetPort)
+	Log.Println("Original sending endpoint:", *srcIP)
+	Log.Println("Seed for fuzzers:", *fuzzerSeed)
+	Log.Println("Fuzzing payload:", *fuzzPayload)
+	if *fuzzPayload {
+		Log.Println("Payload minimum length:", *minPayloadLen, "bytes")
+		Log.Println("Payload maximum length:", *maxPayloadLen, "bytes")
+	}
+	Log.Println("Fuzzing fields:", *fuzzFields)
+	Log.Println("Sending interval between two packets:", *packetSendInterval, "milliseconds")
+	Log.Println("File of packet replay:", *pcapPathFuzz)
+	Log.Printf("Full command to repeat this fuzzing process with new log file and new path to pcap file for saving sent packets:\n"+
+		"sudo %s -dev=%q -target-ip=%q -target-port=%d -source-ip=%q -fuzzer-seed=%d -packet-send-interval=%d "+
+		"-fuzz-payload=%t -min-payload-len=%d -max-payload-len=%d -fuzz-fields=%t -verbose=%t",
+		executable, *device, *destIP, *targetPort, *srcIP, *fuzzerSeed, *packetSendInterval,
+		*fuzzPayload, *minPayloadLen, *maxPayloadLen, *fuzzFields, *verbose)
+	Log.Println("---------------------------------------------------------------------------------------------------------------------------------------")
+}
+
 // ReplayFilenames returns a slice of the filenames to replay.
 // The function checks for existence of the next files
 // by counting up the number at the end of the filename.
