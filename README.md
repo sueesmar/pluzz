@@ -75,6 +75,7 @@ Option | Type | Description
 -pcap-path-send | string | Path to output pcap file, so save the sent packets. (default "/var/tmp/fuzz-send-<datetime>.pcap")
 -replay-following | boolean | Boolean which defines, if the following pcap files should be replayed as well. For this, the filenames of the pcap files have to end with <-nr> (e.g. -0) and count up with an incrementing number. (default false)
 -save-sent-packets | boolean | Boolean which determines if fuzzed packets should be saved to pcap file. (default false)
+-source-ip | string | IP address of the original source of the fuzzing process to poison its ARP table. Activates man-in-the-middle mode.
 -ssh-command | string | Command to start the SUT on the target. To let the process run in background, even the SSH session is closed, use tmux to create a named terminal multiplexer session in background. Install tmux with 'sudo apt-get install tmux'. You can execute multiple commands, separated by ';'. Use '' to enclose commands containing white spaces. The following command is an example to kill an existing process and start a new one: pkill server; tmux new -d -s FuzzSession '~/go/src/github.com/FMNSSun/plus-debug/server/server 192.168.181.133:9999'
 -ssh-password | string | Password to access the target machine by SSH.
 -ssh-process-name | string | Name of the process to check the status for with pgrep <ssh-process-name>.
